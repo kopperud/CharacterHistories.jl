@@ -1,0 +1,7 @@
+name = "CharacterHistories"
+uuid = "0267a739-e408-46c1-ac28-f72bd38a7ac8"
+authors = ["Bjørn Tore Kopperud <kopperud@protonmail.com>"]
+version = "0.1.0"
+
+[deps]
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
