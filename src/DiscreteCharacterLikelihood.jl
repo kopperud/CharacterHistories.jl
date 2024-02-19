@@ -9,18 +9,20 @@ function likelihood(tree, model, data)
     return(logl)
 end
 
-function postorder(node::T, model::Mk, data::Dict) where {T<:InternalNode}
+function postorder(node::T, model::Mk, data::Dict{String,Int64}) where {T<:InternalNode}
     left_branch = node.left
     left_node = left_branch.outbounds
     left_bl = sum(left_branch.times)
     P_left = transition_probability(model, left_bl)
-    x_left, log_nf_left = postorder(left_node, model, data)
 
     right_branch = node.right
     right_node = right_branch.outbounds
     right_bl = sum(right_branch.times)
     P_right = transition_probability(model, right_bl)
+
+    x_left, log_nf_left = postorder(left_node, model, data)
     x_right, log_nf_right = postorder(right_node, model, data)
+
 
     state = P_left * x_left .* P_right * x_right
     nf_node = sum(state)

@@ -28,6 +28,9 @@ function readsimmap(filename)
     tokens2 = tokens[2:end-2]
     left, right = partition(tokens2)
 
+    ntip = length(findall(')', s))+1
+
+
     if left[end][1] != ':'
         left_branch = terminal(left[1])
     else
@@ -160,6 +163,8 @@ function internal(tokens)
 
     left, right = partition(tokens)
 
+    node = Node()
+
     if left[end][1] != ':'
         left_branch = terminal(left[1])
     else
@@ -172,27 +177,36 @@ function internal(tokens)
         right_branch = internal(right)
     end
     
-    node = Node(nothing, left_branch, right_branch)
+    node.left = left_branch
+    node.right = right_branch
+
     right_branch.inbounds = node
     left_branch.inbounds = node
 
-    branch = Branch(nothing, node, states, times)
+    branch = Branch()
+    branch.outbounds = node
+    branch.states = states
+    branch.times = times
+
     node.inbounds = branch
     
-
-
     return(branch)
 end
 
-
-
-
 function terminal(s)
     tiplab = parse_tiplab(s)
-    tip = Tip(1, tiplab)
+
+    tip = Tip()
+    tip.species_name = tiplab
     
     states, times = parse_history(s)
-    branch = Branch(nothing, tip, states, times)
+
+    branch = Branch()
+    branch.outbounds = tip
+    branch.states = states
+    branch.times = times
+
+    tip.inbounds = branch
     
     return(branch)
     return(tip)
