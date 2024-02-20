@@ -9,12 +9,14 @@ abstract type AbstractBranch end
 abstract type InternalNode <: AbstractNode end
 
 mutable struct Tip <: AbstractNode
+    index::Int64
     inbounds::AbstractBranch
     species_name::String
     Tip() = new()
 end
 
 mutable struct Branch <: AbstractBranch
+    index::Int64
     inbounds::AbstractNode
     outbounds::AbstractNode
 
@@ -24,6 +26,7 @@ mutable struct Branch <: AbstractBranch
 end
 
 mutable struct Node <: InternalNode
+    index::Int64
     inbounds::AbstractBranch
     left::AbstractBranch
     right::AbstractBranch
@@ -31,13 +34,16 @@ mutable struct Node <: InternalNode
 end
 
 mutable struct Root <: InternalNode
+    index::Int64
     left::AbstractBranch
     right::AbstractBranch
+    Root() = new()
 end
 
 
 
 function tl_postorder!(labels::Vector{String}, node::Tip)
+    index::Int64
     label = node.species_name
     push!(labels, label)
 end

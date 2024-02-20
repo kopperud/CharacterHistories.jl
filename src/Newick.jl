@@ -30,7 +30,6 @@ function readsimmap(filename)
 
     ntip = length(findall(')', s))+1
 
-
     if left[end][1] != ':'
         left_branch = terminal(left[1])
     else
@@ -43,9 +42,15 @@ function readsimmap(filename)
         right_branch = internal(right)
     end
 
-    root = Root(left_branch, right_branch)
+    root = Root()
+    root.left = left_branch
+    root.right = right_branch
+
     right_branch.inbounds = root
     left_branch.inbounds = root
+
+    reindex!(root) ## make indices on the tree nodes and branches
+
     return(root)
 end
 
