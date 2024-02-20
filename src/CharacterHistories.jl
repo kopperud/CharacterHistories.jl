@@ -6,6 +6,9 @@ include("Tree.jl")
 include("Newick.jl")
 include("SubstitutionModel.jl")
 include("DiscreteCharacterLikelihood.jl")
+include("reindex.jl")
+include("number_of_nodes.jl")
+include("plot.jl")
 
 # Path into package
 export path
