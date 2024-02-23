@@ -4,6 +4,8 @@ mutable struct Mk
     k::Int64
 end
 
+Mk(state_space::Vector{String}, α::Float64) = Mk(state_space, α, length(state_space))
+
 export Mk, transition_probability
 
 function transition_probability(model::Mk, t::Float64)
