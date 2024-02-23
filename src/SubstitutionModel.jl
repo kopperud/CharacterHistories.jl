@@ -1,4 +1,5 @@
 mutable struct Mk
+    state_space::Vector{String}
     α::Float64
     k::Int64
 end

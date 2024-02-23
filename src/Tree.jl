@@ -12,6 +12,7 @@ mutable struct Tip <: AbstractNode
     index::Int64
     inbounds::AbstractBranch
     species_name::String
+    state::String
     Tip() = new()
 end
 
@@ -20,6 +21,8 @@ mutable struct Branch <: AbstractBranch
     inbounds::AbstractNode
     outbounds::AbstractNode
 
+    ## the [1]   first item is the most recent state
+    ## the [end] final item is the oldest state
     states::Vector{String}
     times::Vector{Float64}
     Branch() = new()
@@ -30,6 +33,7 @@ mutable struct Node <: InternalNode
     inbounds::AbstractBranch
     left::AbstractBranch
     right::AbstractBranch
+    state::String
     Node() = new()
 end
 
@@ -37,13 +41,14 @@ mutable struct Root <: InternalNode
     index::Int64
     left::AbstractBranch
     right::AbstractBranch
+    state::String
     Root() = new()
 end
 
 
 
 function tl_postorder!(labels::Vector{String}, node::Tip)
-    index::Int64
+    #index::Int64
     label = node.species_name
     push!(labels, label)
 end
@@ -81,7 +86,7 @@ function tipstates(tree::Root)
     data = ts_postorder!(tree, data)
 end
 
-function ts_postorder!(node::T, data::Dict{String,String}) where {T <: InternalNode}
+function ts_postorder!(node::T, data::Dict{String,Int64}) where {T <: InternalNode}
     left_branch = node.left
     right_branch = node.right
 
@@ -92,7 +97,7 @@ function ts_postorder!(node::T, data::Dict{String,String}) where {T <: InternalN
     data = ts_postorder!(right_node, data)
 end
 
-function ts_postorder!(node::Tip, data::Dict{String,String})
+function ts_postorder!(node::Tip, data::Dict{String,Int64})
     label = node.species_name
     parent_branch = node.inbounds
     most_recent_state = parent_branch.states[1]

@@ -1,20 +1,18 @@
 export likelihood, postorder
 
-function likelihood(tree, model, data)
+function likelihood(tree, model)
     n_branches = number_of_edges(tree)
     D = zeros(n_branches, 2, model.k)
 
-    x, log_nf = postorder!(tree, model, data, D)
+    x, log_nf = postorder!(tree, model, D)
 
     root_freqs = [1/model.k for _ in 1:model.k]
-
-    
 
     logl = log(sum(root_freqs .* x)) + log_nf
     return(logl, D)
 end
 
-function postorder!(node::T, model::Mk, data::Dict{String,Int64}, D::Array{Float64, 3}) where {T<:InternalNode}
+function postorder!(node::T, model::Mk, D::Array{Float64, 3}) where {T<:InternalNode}
     left_branch = node.left
     left_node = left_branch.outbounds
     left_bl = sum(left_branch.times)
@@ -25,8 +23,8 @@ function postorder!(node::T, model::Mk, data::Dict{String,Int64}, D::Array{Float
     right_bl = sum(right_branch.times)
     P_right = transition_probability(model, right_bl)
 
-    x_left, log_nf_left = postorder!(left_node, model, data, D)
-    x_right, log_nf_right = postorder!(right_node, model, data, D)
+    x_left, log_nf_left = postorder!(left_node, model, D)
+    x_right, log_nf_right = postorder!(right_node, model, D)
 
 
     D[left_branch.index,1,:] = x_left
@@ -46,9 +44,10 @@ function postorder!(node::T, model::Mk, data::Dict{String,Int64}, D::Array{Float
     return(state, log_nf)
 end
 
-function postorder!(node::Tip, model::Mk, data::Dict, D::Array{Float64, 3})
+function postorder!(node::Tip, model::Mk, D::Array{Float64, 3})
     state = zeros(model.k)
-    state[data[node.species_name]] = 1
+    idx = findfirst(isequal(node.state), model.state_space)
+    state[idx] = 1
     log_nf = 0.0
 
     return(state, log_nf)
@@ -56,7 +55,15 @@ end
 
 export ancestral_state_probabilities
 
-function ancestral_state_probabilities(tree, model, data, D)
+function ancestral_state_probabilities(tree::Root, model::Mk)
+    logl, D = likelihood(tree, model)
+
+    S = ancestral_state_probabilities(tree, model, D)
+    return(S)
+end
+
+## these are for edge indices
+function ancestral_state_probabilities(tree, model, D)
     n_branches = number_of_edges(tree)
     F = zeros(n_branches, 2, model.k)
 
@@ -68,20 +75,13 @@ function ancestral_state_probabilities(tree, model, data, D)
     S0 = F0 .* D0
     S0 = S0 ./ sum(S0)
 
-    preorder!(tree, model, data, D, F, S0)
-
+    preorder!(tree, model, D, F, S0)
     
     S = D[:,1,:] .* F[:,1,:]
     return(S)
-#    x, log_nf = postorder!(tree, model, data, D)
-
-#    root_freqs = [1/model.k for _ in 1:model.k]
-
-#    logl = log(sum(root_freqs .* x)) + log_nf
-#    return(logl, D)
 end
 
-function preorder!(node::T, model::Mk, data::Dict{String,Int64}, D::Array{Float64, 3}, F::Array{Float64, 3}, S_parent) where {T <: InternalNode}
+function preorder!(node::T, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3}, S_parent) where {T <: InternalNode}
     left_branch = node.left
     left_node = left_branch.outbounds
     left_bl = sum(left_branch.times)
@@ -102,9 +102,9 @@ function preorder!(node::T, model::Mk, data::Dict{String,Int64}, D::Array{Float6
     S_right = F[right_branch.index,1,:] .* D[right_branch.index,1,:]
     S_right = S_right ./ sum(S_right)
 
-    preorder!(left_node, model, data, D, F, S_left)
-    preorder!(right_node, model, data, D, F, S_right)
+    preorder!(left_node, model, D, F, S_left)
+    preorder!(right_node, model, D, F, S_right)
 end
 
-function preorder!(node::Tip, model::Mk, data::Dict, D::Array{Float64, 3}, F::Array{Float64, 3}, S::Vector{Float64})
+function preorder!(node::Tip, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3}, S::Vector{Float64})
 end

@@ -48,6 +48,7 @@ function readsimmap(filename)
 
     right_branch.inbounds = root
     left_branch.inbounds = root
+    root.state = root.left.states[end]
 
     reindex!(root) ## make indices on the tree nodes and branches
 
@@ -194,6 +195,7 @@ function internal(tokens)
     branch.times = times
 
     node.inbounds = branch
+    node.state = states[end]
     
     return(branch)
 end
@@ -212,6 +214,7 @@ function terminal(s)
     branch.times = times
 
     tip.inbounds = branch
+    tip.state = states[1]
     
     return(branch)
     return(tip)

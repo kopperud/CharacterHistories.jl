@@ -1,5 +1,7 @@
 module CharacterHistories
 
+import Distributions
+
 greet() = print("Hello World!")
 
 include("Tree.jl")
@@ -9,6 +11,7 @@ include("DiscreteCharacterLikelihood.jl")
 include("reindex.jl")
 include("number_of_nodes.jl")
 include("plot.jl")
+include("StochasticCharacterMap.jl")
 
 # Path into package
 export path
