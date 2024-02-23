@@ -3,8 +3,7 @@ module CharacterHistoriesMakieExt
 import Makie, CharacterHistories
 
 function CharacterHistories.treeplot(
-    tree::CharacterHistories.Root,
-    model::CharacterHistories.Mk
+    tree::CharacterHistories.Root
 )
     fig = Makie.Figure()
     ax = Makie.Axis(fig[1,1], xreversed = true)
@@ -28,7 +27,9 @@ function CharacterHistories.treeplot(
     end
     
     #state_space = unique(c_states)
-    state_space = model.state_space
+    #state_space = model.state_space
+    state_space = unique(values(CharacterHistories.tipstates(tree)))
+
     tbl = Dict(x => i for (i,x) in enumerate(state_space))
     cs = [tbl[x] for x in c_states]
 
