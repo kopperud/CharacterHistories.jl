@@ -26,7 +26,6 @@ function postorder!(node::T, model::Mk, D::Array{Float64, 3}) where {T<:Internal
     x_left, log_nf_left = postorder!(left_node, model, D)
     x_right, log_nf_right = postorder!(right_node, model, D)
 
-
     D[left_branch.index,1,:] = x_left
     D[right_branch.index,1,:] = x_right
     
@@ -55,31 +54,58 @@ end
 
 export ancestral_state_probabilities
 
-function ancestral_state_probabilities(tree::Root, model::Mk)
+## these are for edge indices
+function ancestral_state_probabilities(tree, model)
     logl, D = likelihood(tree, model)
 
-    S = ancestral_state_probabilities(tree, model, D)
-    return(S)
-end
-
-## these are for edge indices
-function ancestral_state_probabilities(tree, model, D)
     n_branches = number_of_edges(tree)
-    F = zeros(n_branches, 2, model.k)
+    F = zeros(n_branches, 2, model.k) ## 2 because beginning and end of branch
 
     left_branch_idx = tree.left.index
     right_branch_idx = tree.right.index
 
-    F0 = ones(model.k)
-    D0 = D[left_branch_idx,2,:] .* D[right_branch_idx,2,:]
-    S0 = F0 .* D0
-    S0 = S0 ./ sum(S0)
+    F_root = ones(model.k)
+    D_root = D[left_branch_idx,2,:] .* D[right_branch_idx,2,:]
+    S_root = F_root .* D_root
+    S_root = S_root ./ sum(S_root)
 
-    preorder!(tree, model, D, F, S0)
+    preorder!(tree, model, D, F, S_root)
     
-    S = D[:,1,:] .* F[:,1,:]
-    return(S)
+    S_branches = D[:,1,:] .* F[:,1,:]
+
+    ####################################
+    ##
+    ##   convert to node indices
+    ##
+    ##########################
+    n_nodes = number_of_nodes(tree)
+    S_nodes = zeros(n_nodes, model.k)
+
+    S_nodes[tree.index,:] .= S_root
+
+    asp_po(tree, S_branches, S_nodes)
+
+    return(S_nodes)
 end
+
+function asp_po(node::T, S_branches, S_nodes) where {T <: InternalNode}
+    left_branch_idx = node.left.index
+    left_node_idx = node.left.outbounds.index
+    S_nodes[left_node_idx,:] = S_branches[left_branch_idx,:]
+
+    right_branch_idx = node.right.index
+    right_node_idx = node.right.outbounds.index
+    S_nodes[right_node_idx,:] = S_branches[right_branch_idx,:]
+
+    asp_po(node.left.outbounds, S_branches, S_nodes)
+    asp_po(node.right.outbounds, S_branches, S_nodes)
+end
+
+function asp_po(node::Tip, S_branches, S_nodes)
+    node_idx = node.index
+    S_nodes[node_idx,:] = S_branches[node.inbounds.index,:]
+end
+
 
 function preorder!(node::T, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3}, S_parent) where {T <: InternalNode}
     left_branch = node.left

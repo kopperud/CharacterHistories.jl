@@ -86,7 +86,7 @@ function tipstates(tree::Root)
     data = ts_postorder!(tree, data)
 end
 
-function ts_postorder!(node::T, data::Dict{String,Int64}) where {T <: InternalNode}
+function ts_postorder!(node::T, data::Dict{String,String}) where {T <: InternalNode}
     left_branch = node.left
     right_branch = node.right
 
@@ -97,7 +97,7 @@ function ts_postorder!(node::T, data::Dict{String,Int64}) where {T <: InternalNo
     data = ts_postorder!(right_node, data)
 end
 
-function ts_postorder!(node::Tip, data::Dict{String,Int64})
+function ts_postorder!(node::Tip, data::Dict{String,String})
     label = node.species_name
     parent_branch = node.inbounds
     most_recent_state = parent_branch.states[1]
