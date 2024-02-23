@@ -2,8 +2,7 @@
 export readfile
 export tokenize
 export readsimmap
-export terminal
-
+export partition
 
 function readfile(filename)
     io = open(filename, "r")
@@ -149,7 +148,6 @@ function findsplit(tokens)
     throw("split not found") 
 end
 
-export partition
 
 function partition(tokens)
     comma = findsplit(tokens)
@@ -160,8 +158,6 @@ function partition(tokens)
     return (left, right)
 end
 
-
-export internal
 
 function internal(tokens)
     states, times = parse_history(tokens[end])

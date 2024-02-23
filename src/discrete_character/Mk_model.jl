@@ -1,12 +1,13 @@
+export Mk, transition_probability
+
 mutable struct Mk
     state_space::Vector{String}
     α::Float64
     k::Int64
 end
 
+## easier constructor
 Mk(state_space::Vector{String}, α::Float64) = Mk(state_space, α, length(state_space))
-
-export Mk, transition_probability
 
 function transition_probability(model::Mk, t::Float64)
     k = model.k
