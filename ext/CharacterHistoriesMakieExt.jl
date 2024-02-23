@@ -3,7 +3,8 @@ module CharacterHistoriesMakieExt
 import Makie, CharacterHistories
 
 function CharacterHistories.treeplot(
-    tree::CharacterHistories.Root
+    tree::CharacterHistories.Root,
+    model::CharacterHistories.Mk
 )
     fig = Makie.Figure()
     ax = Makie.Axis(fig[1,1], xreversed = true)
@@ -26,11 +27,12 @@ function CharacterHistories.treeplot(
         end
     end
     
-    state_space = unique(c_states)
+    #state_space = unique(c_states)
+    state_space = model.state_space
     tbl = Dict(x => i for (i,x) in enumerate(state_space))
     cs = [tbl[x] for x in c_states]
 
-    cmap = Makie.cgrad([:green, :red, :black], categorical=true)
+    cmap = Makie.cgrad([:black, :red, :green], categorical=true)
 
     Makie.linesegments!(ax, points, color = cs, colormap = cmap, linewidth = 2)
 
