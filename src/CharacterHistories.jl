@@ -22,14 +22,19 @@ include("discrete_character/postorder.jl")
 include("discrete_character/likelihood.jl")
 include("discrete_character/ancestral_state_probabilities.jl")
 
+include("proposals/stochastic_character_map.jl")
+include("proposals/sample_branch.jl")
+include("proposals/redraw_recursive.jl")
+include("proposals/redraw_node.jl")
+include("proposals/redraw_branch.jl")
 
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
 
+
 include("gradient_descent.jl")
 
 include("plot.jl")
-include("StochasticCharacterMap.jl")
 
 # Path into package
 export path
