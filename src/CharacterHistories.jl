@@ -6,6 +6,7 @@ greet() = print("Hello World!")
 
 include("tree/types.jl")
 include("discrete_character/Mk_model.jl")
+include("continuous_character/models.jl")
 
 
 include("tree/Tree.jl")
@@ -21,6 +22,10 @@ include("discrete_character/likelihood.jl")
 include("discrete_character/ancestral_state_probabilities.jl")
 
 
+include("continuous_character/brownian_stateless.jl")
+include("continuous_character/brownian_state_dependent.jl")
+
+include("gradient_descent.jl")
 
 include("plot.jl")
 include("StochasticCharacterMap.jl")

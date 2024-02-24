@@ -6,7 +6,6 @@ function brownian_stateless(tree::Root, model::Brownian, data::Dict)
     μ = zeros(n_nodes)
     V = zeros(n_nodes)
 
-
     log_nf_factor = brownian_stateless_po(tree, model, μ, V, data)
 
     ## root treatment
@@ -21,8 +20,8 @@ end
 function brownian_stateless_po(
         node::T,
         model::Brownian, 
-        μ::Vector{Float64},
-        V::Vector{Float64}, 
+        μ::Vector{Real},
+        V::Vector{Real}, 
         data::Dict
     ) where {T <: InternalNode}
 
@@ -61,7 +60,7 @@ function brownian_stateless_po(
     return(log_nf)
 end
 
-function brownian_stateless_po(node::Tip, model::Brownian, μ::Vector{Float64}, V::Vector{Float64}, data::Dict)
+function brownian_stateless_po(node::Tip, model::Brownian, μ::Vector{Real}, V::Vector{Real}, data::Dict)
     tip_label = node.species_name
 
     μ[node.index] = data[tip_label]
