@@ -31,6 +31,7 @@ include("proposals/redraw_branch.jl")
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
 
+include("find_node.jl")
 
 include("gradient_descent.jl")
 
