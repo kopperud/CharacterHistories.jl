@@ -2,6 +2,7 @@ export Node
 export Tip
 export Branch
 export Root
+export InternalNode
 
 abstract type AbstractNode end
 abstract type AbstractBranch end
