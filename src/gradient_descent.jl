@@ -1,11 +1,15 @@
 export gradient_descent
 
 ## unconstrained gradient descent
-function gradient_descent(f::Function, x::Vector{Float64})
-    step_size = 1.0
+function gradient_descent(
+        f::Function, 
+        x::Vector{Float64}; 
+        max_iters::Int64 = 1000,
+        ϵ::Float64 = 1e-05,
+        step_size::Float64 = 1.0
+    )
+
     objective = Inf
-    max_iters = 1000
-    ϵ = 1e-5
 
     state = deepcopy(x)
 
