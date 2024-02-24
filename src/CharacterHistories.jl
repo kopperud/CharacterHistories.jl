@@ -1,5 +1,6 @@
 module CharacterHistories
 
+import ForwardDiff
 import Distributions
 
 greet() = print("Hello World!")
