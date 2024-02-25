@@ -2,6 +2,7 @@ module CharacterHistories
 
 import ForwardDiff
 import Distributions
+import LinearAlgebra
 
 greet() = print("Hello World!")
 
@@ -30,8 +31,10 @@ include("proposals/redraw_branch.jl")
 
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
+include("continuous_character/vcv.jl")
 
 include("find_node.jl")
+include("parent_nodes.jl")
 
 include("gradient_descent.jl")
 

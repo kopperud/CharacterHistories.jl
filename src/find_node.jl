@@ -20,9 +20,34 @@ function find_internal_node(node::T, idx::Int64) where {T <: InternalNode}
     return(node)
 end
 
-
 function find_internal_node(node::Tip, idx::Int64)
     ## do nothing
     return(node)
 end 
+
+export tip_nodes
+
+function tip_nodes(tree::Root)
+    d = Dict{Int64, Tip}()
+
+    tip_nodes!(tree, d)
+
+    return(d)
+end
+
+function tip_nodes!(
+        node::N, 
+        d::Dict{Int64, Tip}
+    ) where {N <: InternalNode}
+
+    left_node = node.left.outbounds
+    right_node = node.right.outbounds
+
+    tip_nodes!(left_node, d)
+    tip_nodes!(right_node, d)
+end
+
+function tip_nodes!(node::Tip, d::Dict{Int64, Tip})
+    d[node.index] = node
+end
 

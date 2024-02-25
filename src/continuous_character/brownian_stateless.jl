@@ -74,11 +74,42 @@ function loglikelihood_po(
     tip_label = node.species_name
 
     μ[node.index] = data[tip_label]
-    V[node.index] = 0.0
+    V[node.index] = model.observation_variance
     #V = 0.0 ## assume no measurement error
     log_nf = 0.0
 
     return(log_nf)
+end
+
+export loglikelihood_vcv
+
+function loglikelihood_vcv(
+        tree::Root, 
+        model::Brownian,
+        data::Dict{String, T}
+    ) where {T <: Real}
+
+    tips = tip_nodes(tree)
+    n_tips = number_of_tips(tree)
+    nd = node_depths(tree)
+
+    V = zeros(n_tips, n_tips)
+    for i in 1:n_tips, j in 1:n_tips
+        mrca1 = mrca_idx(tree, tips[j], tips[i])
+        V[i,j] = nd[mrca1] * model.sigma2
+    end
+
+    Ve = LinearAlgebra.diagm(ones(n_tips) .* model.observation_variance)
+    V = V + Ve
+
+    
+    X = ones(n_tips, 1)
+    tl = tiplabels(tree)
+    y = [data[tl[i]] for i in 1:n_tips]
+    β = [model.mean]
+
+    logl = gls_logpdf(V, X, y, β)
+    return(logl)
 end
 
 export simulate

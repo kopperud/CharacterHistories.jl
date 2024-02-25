@@ -1,6 +1,6 @@
-export likelihood, postorder
+export loglikelihood, postorder
 
-function likelihood(tree, model)
+function loglikelihood(tree, model)
     n_branches = number_of_edges(tree)
     D = zeros(n_branches, 2, model.k)
 

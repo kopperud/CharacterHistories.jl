@@ -70,7 +70,7 @@ function node_depths(tree::Root)
 
     t = 0.0
 
-    node_depths_po!(tree, depths, t)    
+    node_depths_po!(tree, depths, t)
     return(depths)
 end
 

@@ -52,5 +52,31 @@ end
 
 
 
+export number_of_tips
+
+function number_of_tips(tree::Root)
+    i = zeros(Int64, 1)
+    number_of_tips(tree, i)
+    return(i[1])
+end
+
+function number_of_tips(
+    node::N,
+    i::Vector{Int64}
+) where {N <: InternalNode}
+    left_node = node.left.outbounds
+    right_node = node.right.outbounds
+
+    number_of_tips(left_node, i)
+    number_of_tips(right_node, i)
+end
+
+function number_of_tips(
+    node::Tip,
+    i::Vector{Int64}
+)
+    i[1] += 1
+end
+
 
 
