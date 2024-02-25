@@ -1,5 +1,6 @@
-export brownian
-function brownian(
+export loglikelihood
+
+function loglikelihood(
         tree::Root, 
         model::Brownian,
         data::Dict{String, T}
@@ -9,7 +10,7 @@ function brownian(
     μ = zeros(T, n_nodes)
     V = zeros(T, n_nodes)
 
-    log_nf_factor = brownian_po(tree, model, μ, V, data)
+    log_nf_factor = loglikelihood_po(tree, model, μ, V, data)
 
     ## root treatment
     ## assume that x_0 = μ_root
@@ -20,7 +21,7 @@ function brownian(
     return(log_likelihood)#, μ, V)
 end
 
-function brownian_po(
+function loglikelihood_po(
         node::N,
         model::Brownian, 
         μ::Vector{T},
@@ -36,8 +37,8 @@ function brownian_po(
     right_node = right_branch.outbounds
     right_bl = sum(right_branch.times)
 
-    log_nf_left = brownian_po(left_node, model, μ, V, data)
-    log_nf_right = brownian_po(right_node, model, μ, V, data)
+    log_nf_left = loglikelihood_po(left_node, model, μ, V, data)
+    log_nf_right = loglikelihood_po(right_node, model, μ, V, data)
 
     μ_left = μ[left_node.index]
     V_left = V[left_node.index] + left_bl * model.sigma2
@@ -63,7 +64,7 @@ function brownian_po(
     return(log_nf)
 end
 
-function brownian_po(
+function loglikelihood_po(
     node::Tip, 
     model::Brownian, 
     μ::Vector{T},
