@@ -6,7 +6,8 @@ function gradient_descent(
         x::Vector{Float64}; 
         max_iters::Int64 = 1000,
         ϵ::Float64 = 1e-05,
-        step_size::Float64 = 1.0
+        step_size::Float64 = 1.0,
+        verbose::Bool = false
     )
 
     objective = Inf
@@ -32,17 +33,24 @@ function gradient_descent(
 
         mean_abs_gradient = sum(abs.(𝛁))/(length(𝛁))
         if mean_abs_gradient < ϵ
-            println("converged in $i iters")
             stop = true
+            if verbose
+                println("converged in $i iters")
+            end
         end
 
         if i > max_iters
-            println("did not converge in $i iters")
             stop = true
+            if verbose
+                println("did not converge in $i iters")
+            end
         end
 
         i += 1
     end
-    println("halved step size $j times")
+
+    if verbose
+        println("halved step size $j times")
+    end
     return(objective, state)
 end
