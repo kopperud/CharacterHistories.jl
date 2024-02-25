@@ -1,12 +1,18 @@
 export Brownian
 
-struct Brownian
-    sigma2::Real
-    mean::Real
-    observation_variance::Real
+struct Brownian{T <: Real}
+    sigma2::T
+    mean::T
+    observation_variance::T
 end
 
-Brownian(sigma2, mean) = Brownian(sigma2, mean, 0.0)
+function Brownian(
+    sigma2::T,
+    mean::T
+    ) where {T <: Real}
+    x = Brownian(sigma2, mean, zero(T))
+    return(x)
+end
 
 struct BrownianSD{T <: Real}
     sigma2::Vector{T}

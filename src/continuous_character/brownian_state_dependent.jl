@@ -1,6 +1,10 @@
 export brownian
 
-function brownian(tree::Root, model::BrownianSD, data::Dict)
+function brownian(
+    tree::Root, 
+    model::BrownianSD, 
+    data::Dict{String,T}
+    ) where {T <: Real}
     n_nodes = number_of_nodes(tree)
 
     μ = zeros(eltype(model.mean), n_nodes)
