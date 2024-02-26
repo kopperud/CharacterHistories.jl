@@ -3,6 +3,7 @@ module CharacterHistories
 import ForwardDiff
 import Distributions
 import LinearAlgebra
+import ProgressMeter
 import Base
 
 greet() = print("Hello World!")
@@ -30,6 +31,9 @@ include("proposals/sample_branch.jl")
 include("proposals/redraw_recursive.jl")
 include("proposals/redraw_node.jl")
 include("proposals/redraw_branch.jl")
+include("proposals/reassign_copies.jl")
+
+include("mcmc/mcmc.jl")
 
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
