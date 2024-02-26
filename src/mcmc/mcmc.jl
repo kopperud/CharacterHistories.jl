@@ -9,6 +9,7 @@ function shitty_mcmc(
     )
     tree = deepcopy(tree1)
 
+    S = ancestral_state_probabilities(tree, discrete_model)
     ntip = number_of_tips(tree)
     ninternal = number_of_internal_nodes(tree)
     logls = zeros(n_iters)
@@ -23,7 +24,7 @@ function shitty_mcmc(
         node_state, branch_states = store(node)
 
         ## redraw the node
-        redraw_node!(node, discrete_model)
+        redraw_node!(node, discrete_model, S)
 
         lp = loglikelihood(tree, cont_model, data)
         a1 = exp(lp - l)
@@ -32,10 +33,9 @@ function shitty_mcmc(
 
         r1 = rand()
 
-        if r1 > a
+        if r1 < a
             ## accept, do nothing
             l = lp
-            logls[i] = l
         else
             ## reject, replace old values
             reassign!(node, node_state, branch_states)
