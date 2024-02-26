@@ -3,6 +3,7 @@ module CharacterHistories
 import ForwardDiff
 import Distributions
 import LinearAlgebra
+import Base
 
 greet() = print("Hello World!")
 
@@ -14,6 +15,7 @@ include("continuous_character/models.jl")
 include("tree/Tree.jl")
 include("tree/reindex.jl")
 include("tree/number_of_nodes.jl")
+include("tree/copy.jl")
 
 include("io/readnewick.jl")
 include("io/writenewick.jl")
@@ -39,6 +41,7 @@ include("parent_nodes.jl")
 include("gradient_descent.jl")
 
 include("plot.jl")
+include("utils.jl")
 
 # Path into package
 export path
