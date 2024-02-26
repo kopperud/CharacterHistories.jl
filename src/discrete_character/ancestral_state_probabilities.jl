@@ -8,7 +8,7 @@ export ancestral_state_probabilities
 
 ## these are for edge indices
 function ancestral_state_probabilities(tree, model)
-    logl, D = likelihood(tree, model)
+    logl, D = loglikelihood(tree, model)
 
     n_branches = number_of_edges(tree)
     F = zeros(n_branches, 2, model.k) ## 2 because beginning and end of branch
