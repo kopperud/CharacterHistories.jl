@@ -6,7 +6,7 @@ function waiting_time(model::Mk, state::String)
     return(r)
 end
 
-function sample_new_state(model::Mk, state::String)
+function sample_new_state_naive(model::Mk, state::String)
     x = zeros(model.k)
 
     for (i, s) in enumerate(model.state_space)
@@ -16,6 +16,28 @@ function sample_new_state(model::Mk, state::String)
     end
     d = Distributions.Categorical(x)
     idx = rand(d)
+    new_state = model.state_space[idx]
+
+    return(new_state)
+end
+
+function sample_new_state(model::Mk, state::String)
+    r = rand()
+    p = 1.0/(model.k-1.0)
+
+    #for (i, s) in enumerate(model.state_space)
+    for i in eachindex(model.state_space)
+        #if s != state
+        if model.state_space[i] != state
+            if r < p
+                global idx = i
+                break
+            else
+                r -= p
+            end
+        end
+    end
+
     new_state = model.state_space[idx]
 
     return(new_state)
@@ -69,8 +91,8 @@ function sample_branch_history(
         state = sample_new_state(model, state)
         i += 1
 
-        if i > 50
-            throw("error, too many substitutions")
+        if i > 500
+            throw("error, too many substitutions (rate = $(model.α)")
         end
     end
     reverse!(states)
