@@ -1,5 +1,7 @@
 export loglikelihood
 
+const PI = 3.14159265358979
+
 function loglikelihood(
     tree::Root, 
     model::BrownianSD, 
@@ -41,16 +43,16 @@ function loglikelihood_po(
 
     μ_left = μ[left_node.index]
     V_left = V[left_node.index]
-    for (state, time) in zip(left_branch.states, left_branch.times)
-        state_idx = findfirst(isequal(state), model.state_space)
-        V_left += time * model.sigma2[state_idx]
-    end    
+    for i in eachindex(left_branch.times)
+        state_idx = findfirst(isequal(left_branch.states[i]), model.state_space)
+        V_left += left_branch.times[i] * model.sigma2[state_idx]
+    end
 
     μ_right = μ[right_node.index]
     V_right = V[right_node.index]
-    for (state, time) in zip(right_branch.states, right_branch.times)
-        state_idx = findfirst(isequal(state), model.state_space)
-        V_right += time * model.sigma2[state_idx]
+    for i in eachindex(right_branch.times)
+        state_idx = findfirst(isequal(right_branch.states[i]), model.state_space)
+        V_right += right_branch.times[i] * model.sigma2[state_idx]
     end
 
     ## merging rule
@@ -63,7 +65,6 @@ function loglikelihood_po(
     ## normalizing factor
     contrast = μ_left - μ_right
     log_nf = -(1.0)*contrast^2 / (2*(V_left+V_right))
-    PI = 3.14159265358979
     log_nf -= 0.5 * log(2.0 * PI * (V_left+V_right))
     log_nf += log_nf_left
     log_nf += log_nf_right
