@@ -2,7 +2,7 @@ export loglikelihood, postorder
 
 function loglikelihood(tree, model)
     n_branches = number_of_edges(tree)
-    D = zeros(n_branches, 2, model.k)
+    D = zeros(eltype(model.α), n_branches, 2, model.k)
 
     x, log_nf = postorder!(tree, model, D)
 

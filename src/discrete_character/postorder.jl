@@ -3,7 +3,11 @@
 ##               postorder
 ##
 ########################################
-function postorder!(node::T, model::Mk, D::Array{Float64, 3}) where {T<:InternalNode}
+function postorder!(
+    node::N, 
+    model::Mk, 
+    D::Array{T, 3}
+    ) where {N <: InternalNode, T <: Real}
     left_branch = node.left
     left_node = left_branch.outbounds
     left_bl = sum(left_branch.times)
@@ -34,7 +38,12 @@ function postorder!(node::T, model::Mk, D::Array{Float64, 3}) where {T<:Internal
     return(state, log_nf)
 end
 
-function postorder!(node::Tip, model::Mk, D::Array{Float64, 3})
+function postorder!(
+        node::Tip, 
+        model::Mk, 
+        D::Array{T, 3}
+    ) where {T <: Real}
+
     state = zeros(model.k)
     idx = findfirst(isequal(node.state), model.state_space)
     state[idx] = 1
