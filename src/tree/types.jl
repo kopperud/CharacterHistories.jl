@@ -8,14 +8,6 @@ abstract type AbstractNode end
 abstract type AbstractBranch end
 abstract type InternalNode <: AbstractNode end
 
-mutable struct Tip <: AbstractNode
-    index::Int64
-    inbounds::AbstractBranch
-    species_name::String
-    state::String
-    Tip() = new()
-end
-
 mutable struct Branch <: AbstractBranch
     index::Int64
     inbounds::AbstractNode
@@ -28,19 +20,27 @@ mutable struct Branch <: AbstractBranch
     Branch() = new()
 end
 
+mutable struct Tip <: AbstractNode
+    index::Int64
+    inbounds::Branch
+    species_name::String
+    state::String
+    Tip() = new()
+end
+
 mutable struct Node <: InternalNode
     index::Int64
-    inbounds::AbstractBranch
-    left::AbstractBranch
-    right::AbstractBranch
+    inbounds::Branch
+    left::Branch
+    right::Branch
     state::String
     Node() = new()
 end
 
 mutable struct Root <: InternalNode
     index::Int64
-    left::AbstractBranch
-    right::AbstractBranch
+    left::Branch
+    right::Branch
     state::String
     Root() = new()
 end
