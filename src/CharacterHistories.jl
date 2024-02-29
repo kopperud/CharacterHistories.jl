@@ -17,6 +17,7 @@ include("tree/Tree.jl")
 include("tree/reindex.jl")
 include("tree/number_of_nodes.jl")
 include("tree/copy.jl")
+include("tree/number_state_changes.jl")
 
 include("io/readnewick.jl")
 include("io/writenewick.jl")
@@ -34,6 +35,7 @@ include("proposals/redraw_branch.jl")
 include("proposals/reassign_copies.jl")
 
 include("mcmc/mcmc.jl")
+include("mcmc/ess.jl")
 
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
