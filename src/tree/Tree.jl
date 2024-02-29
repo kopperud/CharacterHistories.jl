@@ -61,3 +61,41 @@ function ts_postorder!(node::Tip, data::Dict{String,String})
     data[label] = most_recent_state
     return(data)
 end
+
+function get_index(node::T) where {T <: CharacterHistories.AbstractNode}
+    return(node.index)
+end
+
+function get_index(branch::Branch)
+    return(branch.index)
+end
+
+export get_state_space
+
+function get_state_space(tree::Root)
+    s = Set{String}()
+
+    state_space!(tree, s)
+    v = collect(s)
+    return(v)
+end
+
+function state_space!(node::N, s::Set{String}) where {N <: InternalNode}
+    left_branch = node.left
+    right_branch = node.right
+
+    for state in left_branch.states
+        push!(s, state)
+    end
+    
+    for state in right_branch.states
+        push!(s, state)
+    end
+
+    state_space!(left_branch.outbounds, s)
+    state_space!(right_branch.outbounds, s)
+end
+
+function state_space!(node::Tip, s::Set{String})
+    ## do nothing    
+end
