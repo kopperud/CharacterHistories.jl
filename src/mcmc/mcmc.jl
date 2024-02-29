@@ -14,13 +14,15 @@ function shitty_mcmc(
     logls = zeros(n_iters)
     αs = zeros(n_iters)
     means = zeros(n_iters)
+    n_changes = zeros(n_iters)
 
     prior_mean = Distributions.Normal(8.0, 1.0)
     α_mean = Distributions.Exponential(0.3)
-    
+
 
     l_discrete = loglikelihood(tree, discrete_model)[1]
     l = loglikelihood(tree, cont_model, data)
+    λ = 0.5
 
     prog = ProgressMeter.Progress(n_iters; desc = "Progress: ")
 
@@ -28,15 +30,17 @@ function shitty_mcmc(
     while i <= n_iters
     #ProgressMeter.@showprogress for i in 1:n_iters
         ## transition rate proposal
-        r = rand(Distributions.Uniform(-1,1))
-        scale = exp(0.5*r)
+        r = rand(Distributions.Uniform(-0.5,0.5))
+        scale = exp(λ * r)
+        hastings_ratio = exp(λ * r)
+
         α_proposal = discrete_model.α * scale
 
         discrete_model_proposal = Mk(discrete_model.state_space, α_proposal)
         l_discrete_p = loglikelihood(tree, discrete_model_proposal)[1]
 
         a1 = exp(l_discrete_p - l_discrete)
-        a2 = 1.0 ## proposal density, is it symmetric ? don't think so
+        a2 = hastings_ratio ## proposal density, is it symmetric ? don't think so
         a = a1 * a2
         
         r1 = rand()
@@ -50,15 +54,16 @@ function shitty_mcmc(
         end
 
         ## brownian rate proposal
-        r = rand(Distributions.Uniform(-1,1))
-        scale = exp(0.5*r)
+        r = rand(Distributions.Uniform(-0.5,0.5))
+        scale = exp(λ * r)
         mean_proposal = cont_model.mean * scale
+        hastings_ratio = exp(λ * r)
 
         cont_model_proposal = BrownianSD(cont_model.sigma2, cont_model.state_space, mean_proposal)
         lp = loglikelihood(tree, cont_model_proposal, data)
 
         a1 = exp(lp - l)
-        a2 = 1.0 ## proposal density, is it symmetric ? don't think so
+        a2 = hastings_ratio ## proposal density, is it symmetric ? don't think so
         a = a1 * a2
         
         r1 = rand()
@@ -83,7 +88,6 @@ function shitty_mcmc(
         ## redraw the node
         S = ancestral_state_probabilities(tree, discrete_model)
         redraw_node!(node, discrete_model, S)
-        #logl_discrete = loglikelihood(tree, dicsrete)
 
         lp = loglikelihood(tree, cont_model, data)
         a1 = exp(lp - l)
@@ -103,10 +107,11 @@ function shitty_mcmc(
         logls[i] = l_discrete + l
         αs[i] = discrete_model.α
         means[i] = cont_model.mean
+        n_changes[i] = number_of_state_changes(tree)
 
         i += 1
         ProgressMeter.next!(prog)
     end
-    return(tree, logls, αs, means)
+    return(tree, logls, αs, means, n_changes)
 end
     
