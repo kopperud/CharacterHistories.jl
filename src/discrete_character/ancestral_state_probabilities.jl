@@ -40,7 +40,12 @@ function ancestral_state_probabilities(tree, model)
     return(S_nodes)
 end
 
-function asp_po(node::T, S_branches, S_nodes) where {T <: InternalNode}
+function asp_po(
+        node::T, 
+        S_branches::Matrix{Float64}, 
+        S_nodes::Matrix{Float64}
+    ) where {T <: InternalNode}
+
     left_branch_idx = node.left.index
     left_node_idx = node.left.outbounds.index
     S_nodes[left_node_idx,:] = S_branches[left_branch_idx,:]
@@ -51,9 +56,14 @@ function asp_po(node::T, S_branches, S_nodes) where {T <: InternalNode}
 
     asp_po(node.left.outbounds, S_branches, S_nodes)
     asp_po(node.right.outbounds, S_branches, S_nodes)
+
 end
 
-function asp_po(node::Tip, S_branches, S_nodes)
+function asp_po(
+        node::Tip, 
+        S_branches::Matrix{Float64}, 
+        S_nodes::Matrix{Float64}
+    )
     node_idx = node.index
     S_nodes[node_idx,:] = S_branches[node.inbounds.index,:]
 end

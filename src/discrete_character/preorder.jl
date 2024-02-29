@@ -3,7 +3,13 @@
 ##               preorder
 ##
 ########################################
-function preorder!(node::T, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3}, S_parent) where {T <: InternalNode}
+function preorder!(
+        node::T, 
+        model::Mk, 
+        D::Array{Float64, 3}, 
+        F::Array{Float64, 3}, 
+        S_parent::Vector{Float64}
+    ) where {T <: InternalNode}
     left_branch = node.left
     left_node = left_branch.outbounds
     left_bl = sum(left_branch.times)
@@ -28,6 +34,12 @@ function preorder!(node::T, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3
     preorder!(right_node, model, D, F, S_right)
 end
 
-function preorder!(node::Tip, model::Mk, D::Array{Float64, 3}, F::Array{Float64, 3}, S::Vector{Float64})
+function preorder!(
+    node::Tip, 
+    model::Mk, 
+    D::Array{Float64, 3}, 
+    F::Array{Float64, 3}, 
+    S::Vector{Float64}
+    )
     ## do nothing
 end
