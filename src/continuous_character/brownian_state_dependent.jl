@@ -24,6 +24,8 @@ function loglikelihood(
     return(log_likelihood)
 end
 
+
+
 function loglikelihood_po(
         node::N,
         model::BrownianSD, 
@@ -41,18 +43,19 @@ function loglikelihood_po(
     log_nf_left = loglikelihood_po(left_node, model, μ, V, data)
     log_nf_right = loglikelihood_po(right_node, model, μ, V, data)
 
-    μ_left = μ[left_node.index]
-    V_left = V[left_node.index]
+    left_index = get_index(left_node)
+    μ_left = μ[left_index]
+    V_left = V[left_index]
     for i in eachindex(left_branch.times)
         state_idx = findfirst(isequal(left_branch.states[i]), model.state_space)
-        V_left += left_branch.times[i] * model.sigma2[state_idx]
+        V_left += left_branch.times[i] * model.sigma2[state_idx] ## not type stable
     end
 
     μ_right = μ[right_node.index]
     V_right = V[right_node.index]
     for i in eachindex(right_branch.times)
         state_idx = findfirst(isequal(right_branch.states[i]), model.state_space)
-        V_right += right_branch.times[i] * model.sigma2[state_idx]
+        V_right += right_branch.times[i] * model.sigma2[state_idx] ## not type stable
     end
 
     ## merging rule
