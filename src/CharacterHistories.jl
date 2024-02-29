@@ -18,6 +18,8 @@ include("tree/reindex.jl")
 include("tree/number_of_nodes.jl")
 include("tree/copy.jl")
 include("tree/number_state_changes.jl")
+include("tree/treelength.jl")
+include("tree/show.jl")
 
 include("io/readnewick.jl")
 include("io/writenewick.jl")
