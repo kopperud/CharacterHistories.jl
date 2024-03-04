@@ -62,8 +62,16 @@ function ts_postorder!(node::Tip, data::Dict{String,String})
     return(data)
 end
 
-function get_index(node::T) where {T <: CharacterHistories.AbstractNode}
+function get_index(tree::Root)
+    return(tree.index)
+end
+
+function get_index(node::Node)
     return(node.index)
+end
+
+function get_index(tip::Tip)
+    return(tip.index)
 end
 
 function get_index(branch::Branch)

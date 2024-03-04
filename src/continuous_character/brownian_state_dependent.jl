@@ -16,7 +16,7 @@ function loglikelihood(
 
     ## root treatment
     ## assume that x_0 = μ_root
-    root_index = tree.index
+    root_index = get_index(tree)
     #root_state = tree.left.states[end]
 
     d = Distributions.Normal(μ[root_index], sqrt(V[root_index]))
@@ -46,24 +46,25 @@ function loglikelihood_po(
     left_index = get_index(left_node)
     μ_left = μ[left_index]
     V_left = V[left_index]
-    for i in eachindex(left_branch.times)
-        state_idx = findfirst(isequal(left_branch.states[i]), model.state_space)
-        V_left += left_branch.times[i] * model.sigma2[state_idx] ## not type stable
+    for (time, state) in zip(left_branch.times, left_branch.states)
+        sigma2 = model.sigma2[state]
+        V_left += time * sigma2 ## not type stable
     end
 
-    μ_right = μ[right_node.index]
-    V_right = V[right_node.index]
-    for i in eachindex(right_branch.times)
-        state_idx = findfirst(isequal(right_branch.states[i]), model.state_space)
-        V_right += right_branch.times[i] * model.sigma2[state_idx] ## not type stable
+    μ_right = μ[get_index(right_node)]
+    V_right = V[get_index(right_node)]
+    for (time, state) in zip(right_branch.times, right_branch.states)
+        sigma2 = model.sigma2[state]
+        V_right += time * sigma2 ## not type stable
     end
 
     ## merging rule
     μ_node = (μ_left*V_right + μ_right*V_left) / (V_left+V_right)
     V_node = (V_left*V_right)/(V_left+V_right)
 
-    μ[node.index] = μ_node
-    V[node.index] = V_node
+    node_index = get_index(node)
+    μ[node_index] = μ_node
+    V[node_index] = V_node
 
     ## normalizing factor
     contrast = μ_left - μ_right
@@ -85,8 +86,9 @@ function loglikelihood_po(
 
     tip_label = node.species_name
 
-    μ[node.index] = data[tip_label]
-    V[node.index] = zero(T)
+    node_index = get_index(node)
+    μ[node_index] = data[tip_label]
+    V[node_index] = zero(T)
     #V = 0.0 ## assume no measurement error
     log_nf = zero(T)
 

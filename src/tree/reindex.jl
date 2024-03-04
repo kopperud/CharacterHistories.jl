@@ -4,20 +4,18 @@ export reindex!
 function reindex!(tree::Root)
     tip_index = Int64[1]
     branch_index = Int64[1]
-    state_space = tree.state_space
     
     ## first index the tip nodes, and return the ntip+1 index
-    root_index = tipindex_po!(tree, tip_index, state_space)
+    root_index = tipindex_po!(tree, tip_index)
 
     ## secondly, index the branches and the internal nodes, 
     ## starting from the root and going (left, right)
-    branchindex_po!(tree, root_index, branch_index, state_space)
+    branchindex_po!(tree, root_index, branch_index)
 end
 
 function tipindex_po!(
     node::T, 
-    tip_index::Vector{Int64},
-    state_space::Vector{String}
+    tip_index::Vector{Int64}
     ) where {T<:InternalNode}
 
     left_branch = node.left
@@ -35,8 +33,7 @@ end
 
 function tipindex_po!(
     node::Tip, 
-    tip_index::Vector{Int64},
-    state_space::Vector{String}
+    tip_index::Vector{Int64}
     )
 
     node.index = tip_index[1]
