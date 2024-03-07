@@ -34,7 +34,6 @@ function ancestral_state_probabilities(tree, model)
     S_nodes = zeros(n_nodes, model.k)
 
     S_nodes[tree.index,:] .= S_root
-
     asp_po(tree, S_branches, S_nodes)
 
     return(S_nodes)

@@ -36,6 +36,12 @@ include("proposals/redraw_recursive.jl")
 include("proposals/redraw_node.jl")
 include("proposals/redraw_branch.jl")
 include("proposals/reassign_copies.jl")
+include("proposals/moves.jl")
+include("proposals/scale.jl")
+
+include("random_variables/random_variables.jl")
+include("random_variables/normal.jl")
+
 
 include("mcmc/mcmc.jl")
 include("mcmc/ess.jl")
