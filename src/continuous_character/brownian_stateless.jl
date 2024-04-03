@@ -40,11 +40,14 @@ function loglikelihood_po(
     log_nf_left = loglikelihood_po(left_node, model, μ, V, data)
     log_nf_right = loglikelihood_po(right_node, model, μ, V, data)
 
-    μ_left = μ[left_node.index]
-    V_left = V[left_node.index] + left_bl * model.sigma2
+    left_index = get_index(left_node)
+    right_index = get_index(right_node)
 
-    μ_right = μ[right_node.index]
-    V_right = V[right_node.index] + right_bl * model.sigma2
+    μ_left = μ[left_index]
+    V_left = V[left_index] + left_bl * model.sigma2
+
+    μ_right = μ[right_index]
+    V_right = V[right_index] + right_bl * model.sigma2
 
     ## merging rule
     μ_node = (μ_left*V_right + μ_right*V_left) / (V_left+V_right)
@@ -114,7 +117,7 @@ end
 
 export simulate
 
-function simulate(tree::Root, model::Brownian)
+function simulate(tree::Root, model::Brownian, sample_sizes::Dict)
     data = Dict{String,Real}()
 
     starting_value = model.mean
@@ -128,7 +131,8 @@ function simulate_recursive(
         node::T, 
         model::Brownian, 
         value::Float64,
-        data::Dict
+        data::Dict,
+        sample_sizes::Dict,
     ) where {T <: InternalNode}
 
     left_branch = node.left
@@ -153,10 +157,11 @@ function simulate_recursive(
     node::Tip, 
     model::Brownian, 
     value::Float64,
-    data::Dict
+    data::Dict,
+    sample_sizes::Dict,
 )
     species_name = node.species_name
-
+    
     observation_distribution = Distributions.Normal(zero(Real), sqrt(model.observation_variance))
     observation_error = rand(observation_distribution)
     data[species_name] = value + observation_error
