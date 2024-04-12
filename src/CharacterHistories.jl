@@ -30,6 +30,9 @@ include("discrete_character/postorder.jl")
 include("discrete_character/likelihood.jl")
 include("discrete_character/ancestral_state_probabilities.jl")
 
+include("random_variables/random_variables.jl")
+include("random_variables/normal.jl")
+
 include("proposals/stochastic_character_map.jl")
 include("proposals/sample_branch.jl")
 include("proposals/redraw_recursive.jl")
@@ -39,15 +42,14 @@ include("proposals/reassign_copies.jl")
 include("proposals/moves.jl")
 include("proposals/scale.jl")
 
-include("random_variables/random_variables.jl")
-include("random_variables/normal.jl")
-
 
 include("mcmc/mcmc.jl")
 include("mcmc/ess.jl")
 
 include("continuous_character/brownian_stateless.jl")
 include("continuous_character/brownian_state_dependent.jl")
+include("continuous_character/ou_stateless.jl")
+include("continuous_character/ou_state_dependent.jl")
 include("continuous_character/vcv.jl")
 
 include("find_node.jl")

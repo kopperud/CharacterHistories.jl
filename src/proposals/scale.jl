@@ -8,11 +8,11 @@ mutable struct Slide <: AbstractMove
     tune_target::Float64
 end
 
-function Slide(rv::RandomVariable)
+function Slide(rv::T) where {T <: RandomVariable}
     return(Slide(rv, 0.5, 1, 0.45))
 end
 
-function Slide(rv::RandomVariable, weight::Int64)
+function Slide(rv::T, weight::Int64) where {T <: RandomVariable}
     return(Slide(rv, 0.5, weight, 0.45))
 end
 

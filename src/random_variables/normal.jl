@@ -10,17 +10,17 @@ function Normal(μ::Float64, σ::Float64)
     d = Distributions.Normal(μ, σ)
 
     x = rand(d)
-    return Normal(x, μ, σ)
+    rv = Normal(x, μ, σ)
+    return(rv)
 end
 
 function logpdf(rv::Normal)
     d = Distributions.Normal(rv.μ, rv.σ)
-    lnl = Distributions.logpdf(d, rv.x)
-    return(lnl)
+    lp = Distributions.logpdf(d, rv.x)
+    return(lp)
 end
 
 function redraw!(rv::Normal)
     d = Distributions.Normal(rv.μ, rv.σ)
-
     rv.x = rand(d)
 end
