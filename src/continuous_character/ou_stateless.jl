@@ -1,4 +1,21 @@
 export loglikelihood
+export OrnsteinUhlenbeck
+
+struct OrnsteinUhlenbeck{T <: Real}
+    sigma2::T
+    α::T
+    θ::T
+    observation_variance::T
+end
+
+function OrnsteinUhlenbeck(
+    sigma2::T,
+    α::T,
+    θ::T
+    ) where {T <: Real}
+    x = OrnsteinUhlenbeck(sigma2, α, θ, zero(T))
+    return(x)
+end
 
 function loglikelihood(
         tree::Root, 
@@ -16,7 +33,8 @@ function loglikelihood(
     ## assume that x_0 = μ_root
     root_index = tree.index
     #log_likelihood = log_nf_factor - 0.5 * log(pi * V[root_index])
-    d = Distributions.Normal(μ[root_index], sqrt(V[root_index]))
+    stationary_var = model.sigma2 / (2*model.α)
+    d = Distributions.Normal(μ[root_index], sqrt(V[root_index] + stationary_var))
     log_likelihood = log_nf_factor + Distributions.logpdf(d, model.θ)
     return(log_likelihood)#, μ, V)
 end
@@ -113,8 +131,17 @@ function loglikelihood_vcv(
     V = zeros(n_tips, n_tips)
     for i in 1:n_tips, j in 1:n_tips
         mrca1 = mrca_idx(tree, tips[j], tips[i])
-        V[i,j] = nd[mrca1] * model.sigma2
+        ta = nd[mrca1] ## time from root to mrca
+        tij = nd[j] + nd[i] - 2*ta
+
+        ## if root is fixed
+        println("fixed root")
+        #V[i,j] = (model.sigma2 / (2 * model.α)) * exp(-model.α*tij) * (1 - exp(-2*model.α*ta))
+        ## If root is randomly distribued
+        V[i,j] = (model.sigma2 / (2* model.α)) * exp(-model.α * tij)
     end
+
+    #return(V)
 
     Ve = LinearAlgebra.diagm(ones(n_tips) .* model.observation_variance)
     V = V + Ve

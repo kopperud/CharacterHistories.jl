@@ -1,4 +1,28 @@
 export loglikelihood
+export OrnsteinUhlenbeckSD
+
+struct OrnsteinUhlenbeckSD{T <: Real}
+    parameters::OrderedCollections.LittleDict{String, Vector{T}}
+    observation_variance::T
+    k::Int64
+end
+
+function OrnsteinUhlenbeckSD(
+    state_space::Vector{String},
+    sigma2s::Vector{T},
+    αs::Vector{T},
+    θs::Vector{T}
+    ) where {T <: Real}
+    @assert length(sigma2s) == length(αs)
+    @assert length(αs) == length(θs)
+
+    d = OrderedCollections.LittleDict{String,Vector{T}}()
+    for (state, σ2, α, θ) in zip(state_space, sigma2s, αs, θs)
+        d[state] = [σ2, α, θ]
+    end
+
+    OrnsteinUhlenbeckSD(d, zero(T), length(sigma2s))
+end
 
 function loglikelihood(
         tree::Root, 

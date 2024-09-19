@@ -1,4 +1,20 @@
 export loglikelihood
+export Brownian
+
+struct Brownian{T <: Real}
+    sigma2::T
+    mean::T
+    observation_variance::T
+end
+
+function Brownian(
+    sigma2::T,
+    mean::T
+    ) where {T <: Real}
+    x = Brownian(sigma2, mean, zero(T))
+    return(x)
+end
+
 
 function loglikelihood(
         tree::Root, 
