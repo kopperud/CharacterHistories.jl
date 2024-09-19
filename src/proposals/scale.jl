@@ -2,17 +2,31 @@ export Slide
 export tune!
 
 mutable struct Slide <: AbstractMove
-    rv::RandomVariable
+    node::Stochastic
+    lambda::Float64 ## tuning parameter
+    weight::Int64 
+    tune_target::Float64
+end
+
+function Slide(node::T; weight = 1, tune_target = 0.23) where {T <: Stochastic}
+    return(Slide(node, 0.5, weight, tune_target))
+end
+
+
+
+#=
+mutable struct Slide <: AbstractMove
+    rv::UnivariateContinuousRV
     λ::Float64 ## tuning parameter
     weight::Int64
     tune_target::Float64
 end
 
-function Slide(rv::T) where {T <: RandomVariable}
+function Slide(rv::T) where {T <: UnivariateContinuousRV}
     return(Slide(rv, 0.5, 1, 0.45))
 end
 
-function Slide(rv::T, weight::Int64) where {T <: RandomVariable}
+function Slide(rv::T, weight::Int64) where {T <: UnivariateContinuousRV}
     return(Slide(rv, 0.5, weight, 0.45))
 end
 
@@ -30,8 +44,10 @@ function tune!(mv::Slide, acceptance::Vector{Bool}, window::Int64)
     mv.λ = λ_new
 end
 
-function propose(rv::T, mv::Slide) where {T <: RandomVariable}
+function propose(rv::T, mv::Slide) where {T <: UnivariateContinuousRV}
     #old_state = copy(x)
 
     
 end
+
+=#
