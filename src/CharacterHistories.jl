@@ -31,7 +31,9 @@ include("discrete_character/likelihood.jl")
 include("discrete_character/ancestral_state_probabilities.jl")
 
 include("random_variables/random_variables.jl")
+include("random_variables/dag.jl")
 include("random_variables/normal.jl")
+include("random_variables/constant.jl")
 include("random_variables/exponential.jl")
 
 include("proposals/stochastic_character_map.jl")

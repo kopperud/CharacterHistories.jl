@@ -14,36 +14,6 @@ abstract type Stochastic <: DagNode end
 abstract type Deterministic <: DagNode end
 #abstract type Constant <: DagNode end
 
-export ConstantNode
-
-mutable struct ConstantNode{T} <: DagNode
-    value::T
-    children::Vector{DagNode}
-end
-
-function ConstantNode(x::Float64)
-    n = ConstantNode(x, DagNode[])
-    return(n)
-end
-
-function ConstantNode(x::Int64)
-    n = ConstantNode(x, DagNode[])
-    return(n)
-end
-
-function Base.Multimedia.display(node::ConstantNode)
-    value = getvalue(node)
-
-    println("A constant node with value $(value). This node has $(length(node.children)) children.")
-end
-
-
-export getvalue
-function getvalue(node::ConstantNode)
-    return(node.value)
-end
-
-
 
 #=
 abstract type UnivariateNode <: DagNode end

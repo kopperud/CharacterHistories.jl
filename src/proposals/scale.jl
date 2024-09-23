@@ -8,8 +8,67 @@ mutable struct Slide <: AbstractMove
     tune_target::Float64
 end
 
-function Slide(node::T; weight = 1, tune_target = 0.23) where {T <: Stochastic}
-    return(Slide(node, 0.5, weight, tune_target))
+function Slide(node::T; lambda = 1.0, weight = 1, tune_target = 0.23) where {T <: Stochastic}
+    return(Slide(node, lambda, weight, tune_target))
+end
+
+export propose
+
+function propose(dag::Dag, node::T, move::Slide) where {T <: Stochastic}
+    old_value = getvalue(node)
+
+    old_logP = calculate_posterior(dag) 
+
+    λ = move.lambda
+
+    new_value = old_value + λ * (rand() -0.5)
+    setvalue!(node, new_value)
+
+    new_logP = calculate_posterior(dag)
+
+    a1 = exp(new_logP - old_logP) 
+    a2 = 1
+    a = a1 * a2
+
+    r = rand()
+    if r > a
+        setvalue!(node, old_value)
+    end
+
+    nothing
+end
+
+export Scale
+mutable struct Scale 
+    λ::Float64
+end
+
+function propose(dag::Dag, node::T, move::Scale) where {T <: Stochastic}
+    old_value = getvalue(node)
+
+    old_logP = calculate_posterior(dag) 
+
+    λ = move.λ
+
+    u = rand()
+    sf = exp(λ*(u-0.5))
+
+    new_value = old_value * sf
+    setvalue!(node, new_value)
+
+    new_logP = calculate_posterior(dag)
+
+    a1 = exp(new_logP - old_logP) 
+    a2 = sf
+
+    a = a1 * a2
+
+    r = rand()
+    if r > a
+        setvalue!(node, old_value)
+    end
+    
+    nothing
 end
 
 
