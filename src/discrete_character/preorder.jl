@@ -5,7 +5,7 @@
 ########################################
 function preorder!(
         node::T, 
-        model::Mk, 
+        model::CharacterHistory, 
         D::Array{Float64, 3}, 
         F::Array{Float64, 3}, 
         S_parent::Vector{Float64}
@@ -36,7 +36,7 @@ end
 
 function preorder!(
     node::Tip, 
-    model::Mk, 
+    model::CharacterHistory, 
     D::Array{Float64, 3}, 
     F::Array{Float64, 3}, 
     S::Vector{Float64}

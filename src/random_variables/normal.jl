@@ -10,6 +10,12 @@ mutable struct Normal{T1 <: DagNode, T2 <: DagNode} <: Stochastic
     children::Vector{DagNode} ## the list of descendant nodes
 end
 
+function Normal(dag::Dag, mu::Float64, sigma::Float64)
+    x1 = ConstantNode(dag, mu)
+    x2 = ConstantNode(dag, sigma)
+    Normal(dag, x1, x2)
+end
+
 function Normal(dag::Dag, mu::T1, sigma::T2) where {T1 <: DagNode, T2 <: DagNode}
     dag.node_counter += 1
     index = dag.node_counter

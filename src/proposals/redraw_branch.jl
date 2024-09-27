@@ -2,7 +2,7 @@ export redraw_branch!
 
 function redraw_branch(
     branch::Branch, 
-    model::Mk, 
+    model::CharacterHistory, 
     oldest_state::String,
     youngest_state::String)
 
@@ -24,7 +24,7 @@ end
 
 function redraw_branch!(
     branch::Branch, 
-    model::Mk
+    model::CharacterHistory
     )
     oldest_state = branch.states[end]
     youngest_state = branch.states[1]
@@ -36,7 +36,7 @@ end
 
 function redraw_branch!(
     branch::Branch, 
-    model::Mk,
+    model::CharacterHistory,
     oldest_state::String,
     youngest_state::String
     )

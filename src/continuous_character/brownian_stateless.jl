@@ -12,6 +12,18 @@ mutable struct Brownian{T1 <: DagNode, T2 <: DagNode, T3 <: DagNode, T4 <: DagNo
 end
 
 function Brownian(
+        dag::Dag,
+        character_history::Root,
+        mean::T1, 
+        sigma::T2, 
+        observation_variance::T3
+    ) where {T1 <: DagNode, T2 <: DagNode, T3 <: DagNode}
+    x1 = ConstantNode(dag, character_history)
+
+    Brownian(dag, x1, mean, sigma, observation_variance)
+end
+
+function Brownian(
     dag::Dag,
     character_history::T1,
     mean::T2,
@@ -22,9 +34,11 @@ function Brownian(
     dag.node_counter += 1
     index = dag.node_counter
 
-    tree = getvalue(character_history)
+    #tree = gettree(character_history)
+    tree = character_history.ch
     tl = tiplabels(tree)
-    value = Dict{String,Float64}(species => x for (species, x) in zip(tl, rand(length(tl))))    
+    #value = Dict{String,Float64}(species => x for (species, x) in zip(tl, rand(length(tl))))    
+    value = Dict{String,Float64}(species => rand() for species in tl) 
     #value = rand(d, 43) ## hard coded number of taxa
 
     node = Brownian(index, value, character_history, mean, sigma2, observation_variance, DagNode[])
@@ -62,7 +76,7 @@ end
 
 
 function logpdf(node::Brownian)
-    tree = getvalue(node.character_history)
+    tree = get_tree(node.character_history)
     lp = loglikelihood(tree, node)
 end
 

@@ -2,7 +2,7 @@ export redraw_nodes_recursive!
 
 function redraw_nodes_recursive!(
         node::T, 
-        model::Mk, 
+        model::CharacterHistory, 
         S::Array{Float64, 2}
     ) where {T <: InternalNode}
     
@@ -20,12 +20,12 @@ function redraw_nodes_recursive!(
     redraw_nodes_recursive!(right_node, model, S)
 end
 
-function redraw_nodes_recursive!(node::Tip, model::Mk, S::Array{Float64, 2})
+function redraw_nodes_recursive!(node::Tip, model::CharacterHistory, S::Array{Float64, 2})
     ## dont do anything
 end
 
 
-function redraw_branches_recursive!(node::Root, model::Mk)
+function redraw_branches_recursive!(node::Root, model::CharacterHistory)
     oldest_state = node.state
 
     ## left branch
@@ -44,7 +44,7 @@ function redraw_branches_recursive!(node::Root, model::Mk)
     redraw_branches_recursive!(right_node, model)
 end
 
-function redraw_branches_recursive!(node::Node, model::Mk)
+function redraw_branches_recursive!(node::Node, model::CharacterHistory)
     this_node_state = node.state
 
     ## parent branch
@@ -70,7 +70,7 @@ function redraw_branches_recursive!(node::Node, model::Mk)
     redraw_branches_recursive!(right_node, model)
 end
 
-function redraw_branches_recursive!(node::Tip, model::Mk) 
+function redraw_branches_recursive!(node::Tip, model::CharacterHistory) 
     ## dont do anything
 end
 

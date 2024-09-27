@@ -3,7 +3,7 @@ export redraw_node!
 
 function redraw_node!(
         node::Node, 
-        model::Mk,
+        model::CharacterHistory,
         S::Array{Float64, 2}
     )
 
@@ -35,7 +35,7 @@ end
 
 function redraw_node!(
         node::Root, 
-        model::Mk, 
+        model::CharacterHistory, 
         S::Array{Float64, 2}
     )
     #this_node_state = node.state

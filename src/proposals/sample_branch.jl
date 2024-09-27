@@ -1,12 +1,12 @@
 export sample_branch!
 
-function waiting_time(model::Mk, state::String)
+function waiting_time(model::CharacterHistory, state::String)
     d = Distributions.Exponential(1 / model.α)
     r = rand(d, 1)[1]
     return(r)
 end
 
-function sample_new_state_naive(model::Mk, state::String)
+function sample_new_state_naive(model::CharacterHistory, state::String)
     x = zeros(model.k)
 
     for (i, s) in enumerate(model.state_space)
@@ -21,7 +21,7 @@ function sample_new_state_naive(model::Mk, state::String)
     return(new_state)
 end
 
-function sample_new_state(model::Mk, state::String)
+function sample_new_state(model::CharacterHistory, state::String)
     r = rand()
     p = 1.0/(model.k-1.0)
 
@@ -45,7 +45,7 @@ end
 
 function sample_branch_history(
     branch::Branch, 
-    model::Mk, 
+    model::CharacterHistory, 
     oldest_state::String,
     youngest_state::String)
 

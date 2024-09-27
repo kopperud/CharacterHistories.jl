@@ -2,13 +2,16 @@ export Dag
 
 mutable struct Dag
     nodes::Vector{DagNode}
+    moves::Vector{AbstractMove}
     node_counter::Int64
 end
 
 function Dag()
     nodes = DagNode[]
+    moves = AbstractMove[]
+
     node_counter = 0
-    dag = Dag(nodes, node_counter)
+    dag = Dag(nodes, moves, node_counter)
     return(dag)
 end
 

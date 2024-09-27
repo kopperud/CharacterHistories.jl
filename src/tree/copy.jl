@@ -27,13 +27,13 @@ function Base.copy(node::Node)
 end
 
 function Base.copy(node::Root)
-    node_copy = Node()
+    node_copy = Root()
 
     node_copy.left = node.left
     node_copy.right = node.right
 
     node_copy.index = node.index
-    node_copy.state = copy(node.state)
+    node_copy.state = node.state
 
     return(node_copy)
 end

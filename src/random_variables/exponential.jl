@@ -8,6 +8,11 @@ mutable struct Exponential{T <: DagNode} <: Stochastic
     children::Vector{DagNode}
 end
 
+function Exponential(dag, rate::Float64)
+    x1 = ConstantNode(dag, rate)
+    Exponential(dag, x1)
+end
+
 function Exponential(dag::Dag, rate::DagNode)
     dag.node_counter += 1
     index = dag.node_counter
