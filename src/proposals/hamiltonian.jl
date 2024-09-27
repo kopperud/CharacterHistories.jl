@@ -15,6 +15,5 @@ function hmc_iteration(
     phi = rand(rv)
     th_old = th
 
-    log_p_old = 
-    
+    log_p_old = NaN
 end
