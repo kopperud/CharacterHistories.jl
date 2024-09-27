@@ -3,8 +3,8 @@ export CharacterHistory, transition_probability
 mutable struct CharacterHistory{T1 <: DagNode, T2 <: DagNode} <: Stochastic
     index::Int64
     value::Dict{String, String}
-    tree::T1
-    ch::Root
+    tree::T1  ## this is the parent in the DAG
+    ch::Root  ## this is the tree with the augmented character history
     state_space::Vector{String}
     α::T2
     k::Int64
@@ -23,7 +23,7 @@ function CharacterHistory(
     x1 = ConstantNode(dag, tree)
     x2 = ConstantNode(dag, α)
 
-    CharacterHistory(dag, x1, x2, state_space)
+    CharacterHistory(dag, tree, x2, state_space)
 end
 
 ## easier constructor
@@ -71,15 +71,15 @@ end
 
 
 function logpdf(ch::CharacterHistory)
-    tree = ch.ch
+    root_node = ch.ch
    
     α = getvalue(ch.α)
     k = ch.k
 
-    n_branches = number_of_edges(tree)
+    n_branches = number_of_edges(root_node)
     D = zeros(eltype(α), n_branches, 2, k)
 
-    x, log_nf = postorder!(tree, ch, D)
+    x, log_nf = postorder!(root_node, ch, D)
 
     ## what are appropriate root freqs?
     ## the ratio of the observed character states?
@@ -168,7 +168,6 @@ end
 function postorder!(
         node::Tip, 
         ch::CharacterHistory,
-        #model::CharacterHistory, 
         D::Array{T, 3}
     ) where {T <: Real}
 
@@ -235,22 +234,32 @@ end
 export ancestral_state_probabilities
 
 ## these are for edge indices
-function ancestral_state_probabilities(tree, model)
-    logl, D = loglikelihood(tree, model)
+function ancestral_state_probabilities(
+    ch::CharacterHistory,
+)
+    α = getvalue(ch.α)
+    k = ch.k
+    root = ch.ch
+    n_branches = number_of_edges(root)
+    F = zeros(eltype(α), n_branches, 2, k) ## 2 because beginning and end of branch
+    D = zeros(eltype(α), n_branches, 2, k)
 
-    n_branches = number_of_edges(tree)
-    F = zeros(n_branches, 2, model.k) ## 2 because beginning and end of branch
+    ## Postorder    
+    x, log_nf = postorder!(root, ch, D) ## this fills in D
 
-    left_branch_idx = tree.left.index
-    right_branch_idx = tree.right.index
+    ## some shenanigans at the root
+    left_branch_idx = root.left.index
+    right_branch_idx = root.right.index
 
-    F_root = ones(model.k)
+    F_root = ones(k)
     D_root = D[left_branch_idx,2,:] .* D[right_branch_idx,2,:]
     S_root = F_root .* D_root
     S_root = S_root ./ sum(S_root)
 
-    preorder!(tree, model, D, F, S_root)
-    
+    ## Preorder
+    preorder!(root, ch, D, F, S_root)
+   
+    ## ancestral state probs
     S_branches = D[:,1,:] .* F[:,1,:]
 
     ####################################
@@ -258,11 +267,11 @@ function ancestral_state_probabilities(tree, model)
     ##   convert to node indices
     ##
     ##########################
-    n_nodes = number_of_nodes(tree)
-    S_nodes = zeros(n_nodes, model.k)
+    n_nodes = number_of_nodes(root)
+    S_nodes = zeros(n_nodes, k)
 
-    S_nodes[tree.index,:] .= S_root
-    asp_po(tree, S_branches, S_nodes)
+    S_nodes[root.index,:] .= S_root
+    asp_po(root, S_branches, S_nodes)
 
     return(S_nodes)
 end

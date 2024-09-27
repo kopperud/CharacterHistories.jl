@@ -5,7 +5,10 @@ export ancestral_character_map
 
 export stochastic_character_map 
 
-function stochastic_character_map(tree, model)
+function stochastic_character_map(
+    tree::Root, 
+    model::CharacterHistory
+    )
     S = ancestral_state_probabilities(tree, model)
 
     tree2 = deepcopy(tree)

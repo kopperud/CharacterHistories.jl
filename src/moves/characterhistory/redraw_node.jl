@@ -1,5 +1,23 @@
 
 export redraw_node!
+export redraw_random_node!
+
+function redraw_random_node!(
+    model::CharacterHistory,
+    S::Array{Float64, 2},
+    )
+    nnodes = number_of_nodes(model.ch)
+    ntips = number_of_tips(model.ch)
+
+    internal_node_indices = collect(range(ntips+1, nnodes; step = 1)) 
+
+    node_index = sample(internal_node_indices)
+    node = find_internal_node(model.ch, node_index)
+
+    redraw_node!(node, model, S)
+
+    return(node_index) 
+end
 
 function redraw_node!(
         node::Node, 

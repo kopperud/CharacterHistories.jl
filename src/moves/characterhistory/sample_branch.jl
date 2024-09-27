@@ -1,7 +1,8 @@
 export sample_branch!
 
 function waiting_time(model::CharacterHistory, state::String)
-    d = Distributions.Exponential(1 / model.α)
+    α = getvalue(model.α)
+    d = Distributions.Exponential(1 / α)
     r = rand(d, 1)[1]
     return(r)
 end
@@ -59,10 +60,12 @@ function sample_branch_history(
     
     i = 1
 
+    α = getvalue(model.α)
+
     ## Nielsen (2001) Genetics, equation A2
     if oldest_state != youngest_state
         ## first waiting time
-        tw = - log(1 - rand()*(1-exp(-model.α*bl)))/model.α
+        tw = - log(1 - rand()*(1-exp(-α*bl)))/α
         if tw > bl
             throw("error")
         end
